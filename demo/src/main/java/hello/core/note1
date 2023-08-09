@@ -1,0 +1,83 @@
+1.
+
+2. 주문과 할인 도메인 설계
+ - 회원은 상품을 주문한다.
+ - 회원은 등급에 따라 할인 정책을 적용할 수 있다.
+ - 할인정책은 VIP등급은 1000원을 할인한다.
+ - 할인정책은 차후 변경될 수 있다.
+
+
+회원(클라이언트) --- 1. 주문생성 ---> 주문서비스 역할-- 2. 회원 조회 ---> 회원 저장소 역할
+                    회원id                     -- 3. 할인 적용 ---> 할인 정책 역할
+                    상품명
+                    상품가격
+              <---- return -----
+
+
+1. 주문생성 : 클라이언트(회원)은 주문서비스에 주문생성을 요청하다.
+2. 회원조회 : 할인을 위해 회원등급이 필요하여 주문서비스는 회원 저장소에서 회원을 조회한다.
+3. 할인적용 : 주문서비스는 회원 등급에 따른 할인 여부를 할인정책에 위임.
+4. 결과반환
+
+
+-------------------------------------------------------------------
+새로운 할인 정책 적용과 문제점.
+
+- 할인정책을 변경하려면 클라이언트인 orderServiceImpl를 고쳐야한다.
+   FixDiscountPolicy --> RateDiscountPolicy
+
+  문제점
+  역할 / 구현 -- ㅇ
+  다형성 활용 / 인터페이스, 구현 객체를 분리 -- ㅇ
+  OCP, DIP 같은 객체지향 설계원칙을 준수 -- 그렇게 보이지만 사실 아님
+
+  DIP - 주문서비스 orderServiceimpl는 discountPolicy 인터페이스에 의존.
+   >>추상(인터페이스) 뿐만아니라  구체( 구현 ) 클래스에도 의존.
+   >>추상(인터페이스) 의존 : DiscountPolicy
+     구체(구현) 클래스 의존: FixDiscountPolicy, RateDiscountPolicy
+
+  OCP - 현 상태에서 기능을 확장해서 변경하려면 클라이언트(회원)코드에 영향을 준다. --> OCP를 위반.
+
+1) 예상도
+OrderServiceImpl --------------------- interface DisCountPolicy
+                                            + FixDiscountPolicy
+                                            + RateDiscountPolicy
+
+2) 현 상황
+OrderServiceImpl --------------------- interface DisCountPolicy
+        ㄴ --------------------------->     + FixDiscountPolicy
+                                            + RateDiscountPolicy
+
+3) orderServiceimpl에서 fixdiscountpolicy를 ratediscountpolicy도 변경해야하니 이건 OCP 위반
+OrderServiceImpl --------------------- interface DisCountPolicy
+        ㄴ ----------- x ------------->     + FixDiscountPolicy
+        ㄴ --------------------------->     + RateDiscountPolicy
+
+---------- ---------- ----------- ----------- ------------- ------ -----------------
+
+1) 예상도처럼 하기 위해선
+private DiscountPolicy discountPolicy;  // 3) 인터페이스에만 의존하도록 변경
+하지만 이대로 실행시 NPE(null pointer exception)가 발생한다.
+
+ - 1. 관심사 분리
+    인터페이스를 배역(배우의 역할) 이라고 가정할때
+        A 역할(인터페이스) 에는 a배우(구현체)
+        B 역할(인터페이스) 에는 b배우(구현체)
+
+
+ ---- AppConfig 클래스파일
+    각 서비스 별 선언 및 서비스 구현 객체 생성(new)
+    생성한 객체 인스턴스의 참조(래퍼런스)를 생성자를 통해서 주입(연결)
+MemberServiceImpl ---->  MemoryMemberRepository
+OrderServiceImpl  ----> MemoryMemberRepository , FixDiscountPolicy
+
+ >> 단지 MemberRepository 인터페이스만 의존한다
+ >> MemberServiceImpl 의 생성자를 통해서 어떤 구현 객체를 주입할지는 오직 외부( AppConfig )에서 결정
+ >> MemberServiceImpl 은 이제부터 의존관계에 대한 고민은 외부에 맡기고 실행에만 집중하면 된.
+
+
+
+ AppConfig는 구체 클래스를 선택한다
+ 애플리케이션이 어떻게 동작해야 할지 전체 구성을 책임진다
+
+

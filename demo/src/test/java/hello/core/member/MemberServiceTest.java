@@ -1,6 +1,8 @@
 package hello.core.member;
 
+import hello.core.AppConfig;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -9,7 +11,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * 회원 도메인 - 회원 가입 테스트 ( jUnit )
  * */
 class MemberServiceTest {
-    MemberService memberService = new MemberServiceImpl();
+    //MemberService memberService = new MemberServiceImpl();
+    MemberService memberService;   // 3) c
+
+    @BeforeEach
+    public void beforeEach(){       // 3) c
+        AppConfig appConfig = new AppConfig();
+        memberService = appConfig.memberService();
+    }
+
 
     @Test
     void join(){
@@ -34,4 +44,6 @@ class MemberServiceTest {
 *   필기 -
 *   의존관계가 인터페이스 뿐만 아니라 구현까지 모두 의존하는 문제점이 있음.
 *
+*   3) AppConfig 이후 수정
+* 
 * */

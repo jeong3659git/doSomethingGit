@@ -5,7 +5,11 @@ package hello.core.member;
  * */
 public class MemberServiceImpl implements MemberService{
 
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
+    // private final MemberRepository memberRepository = new MemoryMemberRepository();  //  1) D
+    private final MemberRepository memberRepository;    // 1) C
+    public MemberServiceImpl(MemberRepository memberRepository){ // 1) C
+        this.memberRepository = memberRepository;
+    }
 
     @Override
     public void join(Member member) {
@@ -17,3 +21,5 @@ public class MemberServiceImpl implements MemberService{
         return memberRepository.findById(memberId);
     }
 }
+
+// 1) AppConfig 이후 변경

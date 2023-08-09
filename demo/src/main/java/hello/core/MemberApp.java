@@ -12,7 +12,10 @@ import hello.core.member.MemberServiceImpl;
 public class MemberApp {
     public static void main(String[] args){
         // 1. 회원서비스
-        MemberService memberService = new MemberServiceImpl();
+            //MemberService memberService = new MemberServiceImpl();
+            AppConfig appConfig = new AppConfig();                      // 3) c
+            MemberService memberService = appConfig.memberService();
+
 
         // 2. 회원 생성
         Member member = new Member(1l, "memberA" , Grade.VIP);
@@ -24,3 +27,5 @@ public class MemberApp {
         System.out.println("find Member = " + finMember.getName()); // 조회하는 회원 이름
     }
 }
+
+// 3) AppConfig 이후 수정
