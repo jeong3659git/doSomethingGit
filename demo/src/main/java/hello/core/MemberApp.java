@@ -1,5 +1,10 @@
-package hello.core.member;
+package hello.core;
 
+
+import hello.core.member.Grade;
+import hello.core.member.Member;
+import hello.core.member.MemberService;
+import hello.core.member.MemberServiceImpl;
 
 /**
  * 회원 도메인과 실행 테스트
