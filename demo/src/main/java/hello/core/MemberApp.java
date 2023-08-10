@@ -5,6 +5,8 @@ import hello.core.member.Grade;
 import hello.core.member.Member;
 import hello.core.member.MemberService;
 import hello.core.member.MemberServiceImpl;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * 회원 도메인과 실행 테스트
@@ -12,10 +14,12 @@ import hello.core.member.MemberServiceImpl;
 public class MemberApp {
     public static void main(String[] args){
         // 1. 회원서비스
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+            //AppConfig appConfig = new AppConfig();                      // 3) c
+            //MemberService memberService = appConfig.memberService();
             //MemberService memberService = new MemberServiceImpl();
-            AppConfig appConfig = new AppConfig();                      // 3) c
-            MemberService memberService = appConfig.memberService();
 
+        MemberService memberService = applicationContext.getBean("memberService", MemberService.class);
 
         // 2. 회원 생성
         Member member = new Member(1l, "memberA" , Grade.VIP);
@@ -29,3 +33,5 @@ public class MemberApp {
 }
 
 // 3) AppConfig 이후 수정
+
+// applictionContext.getBean ( spring으로 전환 )

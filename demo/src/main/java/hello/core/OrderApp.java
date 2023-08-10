@@ -7,17 +7,27 @@ import hello.core.member.MemberServiceImpl;
 import hello.core.order.Order;
 import hello.core.order.OrderService;
 import hello.core.order.OrderServiceImpl;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * 주문과 할인 정책 실행
  * */
 public class OrderApp {
     public static void main(String[]args){
-        //MemberService memberService = new MemberServiceImpl();  // 회원 서비스
-        //OrderService orderService = new OrderServiceImpl();     // 주문 서비스
-        AppConfig appConfig = new AppConfig();                    // 3) c
-        MemberService memberService = appConfig.memberService();
-        OrderService orderService = appConfig.orderService();
+        // Spring 전환
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+        MemberService memberService = applicationContext.getBean("memberService", MemberService.class);
+        OrderService orderService = applicationContext.getBean("orderService", OrderService.class);
+//        AppConfig appConfig = new AppConfig();                    // 3) c
+//        MemberService memberService = appConfig.memberService();
+//        OrderService orderService = appConfig.orderService();
+
+//        MemberService memberService = new MemberServiceImpl();  // 회원 서비스
+//        OrderService orderService = new OrderServiceImpl();     // 주문 서비스
+
+
+
 
         // 2. 회원 생성
         long memberId = 1l;
